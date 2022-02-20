@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon compte - MaBoutique{% endblock %}
+
+{% block content %}
+    <h1>Mon compte</h1>
+    <p>Bienvenue {{ app.user.firstname }} dans votre compte. <br />
+    C'est dans cet espace que vous allez pouvoir gérer vos informations personnelles.</p>
+    <hr />
+    <ul>
+        <li>Modifier mon mot de passe</li>
+        <li>Ajouter mes adresses</li>
+        <li>Mes commandes</li>
+    </ul>
+
+{% endblock %}
