@@ -13,15 +13,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RegisterController extends AbstractController
 {
-    private $entityManager;
-
-    public function __construct(EntityManagerInterface $entityManager)
-    {
-        $this->entityManager = $entityManager;
-    }
-
     #[Route('/inscription', name: 'register')]
-    public function index(Request $request, UserPasswordHasherInterface $encoder): Response
+    public function index(Request $request, UserPasswordHasherInterface $encoder, EntityManagerInterface $manager): Response
     {
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user);
@@ -37,8 +30,8 @@ class RegisterController extends AbstractController
                 $user->getPassword()
             ));
 
-            $this->entityManager->persist($user);
-            $this->entityManager->flush();
+            $manager->persist($user);
+            $manager->flush();
         }
 
         return $this->render('register/index.html.twig', [
