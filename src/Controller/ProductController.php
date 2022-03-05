@@ -2,26 +2,34 @@
 
 namespace App\Controller;
 
+use App\DTO\SearchProductCriteria;
 use App\Entity\Product;
+use App\Form\SearchProductType;
 use App\Repository\ProductRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class ProductController extends AbstractController
 {
     #[Route('/nos-produits', name: 'products')]
-    public function index(ProductRepository $repository): Response
+    public function index(ProductRepository $repository, Request $request): Response
     {
-        $products = $repository->findAll();
+        $criteria = new SearchProductCriteria();
+
+        $form = $this->createForm(SearchProductType::class, $criteria);
+
+        $form->handleRequest($request);
 
         return $this->render('product/index.html.twig', [
-            'products' => $products,
+            'products'  => $repository->findAllByCriteria($criteria),
+            'form'      => $form->createView(),
         ]);
     }
 
     #[Route('/nos-produits/{slug}', name: 'product')]
-    public function show(ProductRepository $repository, Product $product): Response
+    public function show(Product $product): Response
     {
         // $product = $repository->findOneBySlug($slug);
 

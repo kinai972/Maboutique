@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\DTO\SearchProductCriteria;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -17,6 +18,25 @@ class ProductRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Product::class);
+    }
+
+    public function findAllByCriteria(SearchProductCriteria $criteria): array
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('c', 'p')
+            ->join('p.category', 'c');
+
+        if (!empty($criteria->categories)) {
+            $qb = $qb->andWhere('c.id IN (:categories)')
+                ->setParameter('categories', $criteria->categories);
+        }
+
+        if (!empty($criteria->string)) {
+            $qb = $qb->andWhere('p.name LIKE :string')
+                ->setParameter('string', "%{$criteria->string}%");
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     // /**
